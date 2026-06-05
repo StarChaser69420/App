@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text, View, Image} from 'react-native';
-
+// Main page styling for text and image in main page
 const YourApp = () => {
   return (
     <View

@@ -17,7 +17,7 @@ export default function RegisterScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const dark = colorScheme === 'dark';
-
+//uses register with firebase to add an account and ensure a valid password and email
   const handleRegister = async () => {
     setError('');
     if (!email || !password || !confirm) return setError('Please fill in all fields');
@@ -33,8 +33,6 @@ export default function RegisterScreen() {
           setError('Invalid email address'); break;
         case 'auth/email-already-in-use':
           setError('An account with this email already exists'); break;
-        case 'auth/weak-password':
-          setError('Password should be at least 6 characters'); break;
         default:
           setError('Registration failed, please try again');
       }
@@ -42,7 +40,7 @@ export default function RegisterScreen() {
       setLoading(false);
     }
   };
-
+//styling for page including text inputs and buttons.
   return (
     <View style={[styles.container, { backgroundColor: dark ? '#000' : '#fff' }]}>
       <Text style={[styles.title, { color: dark ? '#fff' : '#000' }]}>Create Account</Text>

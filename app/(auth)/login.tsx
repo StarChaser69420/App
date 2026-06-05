@@ -17,7 +17,7 @@ export default function LoginScreen() {
   const colorScheme = useColorScheme();
   const dark = colorScheme === 'dark';
 
-  const handleLogin = async () => {
+  const handleLogin = async () => { {/*clears errors and calls login from firebase then redirects user to main page*/}
     setError('');
     if (!email || !password) return setError('Please fill in all fields');
     setLoading(true);
@@ -28,10 +28,8 @@ export default function LoginScreen() {
       switch (error.code) {
         case 'auth/invalid-email':
           setError('Invalid email address'); break;
-        case 'auth/user-not-found':
-          setError('No account found with this email'); break;
-        case 'auth/wrong-password':
-          setError('Incorrect password'); break;
+        case 'auth/invalid-credential':
+          setError('Incorrect email or password'); break;
         case 'auth/too-many-requests':
           setError('Too many attempts, try again later'); break;
         default:
@@ -41,7 +39,7 @@ export default function LoginScreen() {
       setLoading(false);
     }
   };
-
+    //style for login ie text, button, inputs, etc
   return (
     <View style={[styles.container, { backgroundColor: dark ? '#000' : '#fff' }]}>
       <Text style={[styles.title, { color: dark ? '#fff' : '#000' }]}>Sign In</Text>
@@ -75,7 +73,7 @@ export default function LoginScreen() {
         placeholderTextColor={dark ? '#8e8e93' : '#999'}
         value={password}
         onChangeText={setPassword}
-        secureTextEntry
+        secureTextEntry 
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>

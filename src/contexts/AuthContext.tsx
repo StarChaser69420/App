@@ -20,9 +20,9 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); //loading until firebase gives initial state
 
-  useEffect(() => {
+  useEffect(() => { {/*running session and looking refreshing in the background*/}
     const unsubscribe = onAuthStateChanged(auth, u => {
       setUser(u);
       setLoading(false);
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext); {/*shows who is logged in and there info when calling useAuth*/}
   if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }
