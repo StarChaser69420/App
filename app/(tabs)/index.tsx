@@ -2,21 +2,19 @@ import React from 'react';
 import {Text, View, Image} from 'react-native';
 // Main page styling for text and image in main page
 const YourApp = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}>
-      <Text>Hello World</Text>
-
-      <Image
-        source={require('../../assets/images/icon.png')}
-        style={{ width: 200, height: 200 }}
-      />
-    </View>
-  );
-};
+   return (
+      <View style={{ flex: 1, paddingTop: 40 }}>
+        <FlatList
+          data={chats}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <View style={{ padding: 16 }}>
+              <Text>{item.name}</Text>
+            </View>
+          )}
+        />
+      </View>
+    );
+  };
 
 export default YourApp;

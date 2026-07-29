@@ -14,4 +14,4 @@ export default function Index() {
   }
 // authenticated goes to tabs unauthenticated goes to login page
   return user ? <Redirect href="/(tabs)" /> : <Redirect href="/(auth)/login" />;
-}
+} 

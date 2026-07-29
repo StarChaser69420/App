@@ -73,7 +73,7 @@ export default function LoginScreen() {
         placeholderTextColor={dark ? '#8e8e93' : '#999'}
         value={password}
         onChangeText={setPassword}
-        secureTextEntry 
+        secureTextEntry
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
