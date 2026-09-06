@@ -23,11 +23,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
+      {/* Change this to match your file name, e.g., "chats" if your file is app/(tabs)/chats.tsx */}
       <Tabs.Screen
-        name="explore"
+        name="chats"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Chats',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bubble.left.fill" color={color} />,
         }}
       />
     </Tabs>

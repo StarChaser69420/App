@@ -8,8 +8,8 @@ import {
 //import firebase realtime query utilities
 import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { useRouter } from 'expo-router';
-import { db } from '../src/config/firebase';
-import { useAuth } from '../src/contexts/AuthContext';
+import { db } from '../../src/config/firebase'; // Adjust relative path if necessary
+import { useAuth } from '../../src/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 type ChatSummary = {
@@ -17,7 +17,7 @@ type ChatSummary = {
   name: string;
   type: string;
   memberIds?: string[];
-  roles?: Record<string, string>; // e.g. { "user_123": "admin", "user_456": "member" }
+  roles?: Record<string, string>;
   lastMessage?: { text: string; senderId: string; createdAt: any };
   updatedAt?: any;
 };
@@ -58,13 +58,11 @@ export default function ChatsListScreen() {
     return unsubscribe;
   }, [user]);
 
-  // Helper function defined cleanly inside the component
   const getUserRole = (chat: ChatSummary) => {
     if (!user?.uid || !chat.roles) return 'member';
     return chat.roles[user.uid] || 'member';
   };
 
-  // ALL returns MUST be inside the component function block like this:
   if (loading) {
     return (
       <View style={[styles.center, { backgroundColor: dark ? '#000' : '#fff' }]}>

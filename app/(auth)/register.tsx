@@ -8,9 +8,12 @@ import { useAuth } from '../../src/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function RegisterScreen() {
+  // Sets up input states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+
+  // loading states and errors
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { register } = useAuth();
