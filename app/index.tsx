@@ -95,7 +95,7 @@ export default function ChatsListScreen() {
           return (
             <TouchableOpacity
               style={[styles.row, { borderBottomColor: dark ? '#2c2c2e' : '#eee' }]}
-              onPress={() => router.push(`/chat/${item.id}`)}
+              onPress={() => router.push(`/chats/${item.id}`)}
             >
               <Text style={[styles.chatName, { color: dark ? '#fff' : '#000' }]}>
                 {item.name}

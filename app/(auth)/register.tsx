@@ -29,7 +29,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await register(email, password);
-      router.replace('/(tabs)');
+      router.replace('/(auth)/login');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/invalid-email':

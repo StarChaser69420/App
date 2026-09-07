@@ -23,7 +23,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await login(email, password);
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/chats');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/invalid-email':
