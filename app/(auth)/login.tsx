@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, ActivityIndicator
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -14,6 +14,7 @@ export default function LoginScreen() {
   const [error, setError] = useState('');
   const { login } = useAuth();
   const router = useRouter();
+  const { redirect } = useLocalSearchParams<{ redirect?: string }>();
   const colorScheme = useColorScheme();
   const dark = colorScheme === 'dark';
 
@@ -23,7 +24,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await login(email, password);
-      router.replace('/(tabs)/chats');
+      router.replace(redirect ? decodeURIComponent(redirect) : '/chats');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/invalid-email':
@@ -84,7 +85,12 @@ export default function LoginScreen() {
       </TouchableOpacity>
 
 
-     <TouchableOpacity onPress={() => router.replace('/(auth)/register')} style={{ alignItems: 'center', marginTop: 16 }}>
+     <TouchableOpacity
+       onPress={() => router.replace({
+         pathname: '/(auth)/register',
+         params: redirect ? { redirect } : {},
+       })}
+       style={{ alignItems: 'center', marginTop: 16 }}>
        <Text style={{ color: '#007AFF' }}>Don't have an account? Register</Text>
      </TouchableOpacity>
     </View>

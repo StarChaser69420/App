@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, ActivityIndicator
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '../../src/contexts/AuthContext';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -18,6 +18,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState('');
   const { register } = useAuth();
   const router = useRouter();
+  const { redirect } = useLocalSearchParams<{ redirect?: string }>();
   const colorScheme = useColorScheme();
   const dark = colorScheme === 'dark';
 //uses register with firebase to add an account and ensure a valid password and email
@@ -29,7 +30,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await register(email, password);
-      router.replace('/(auth)/login');
+      router.replace(redirect ? decodeURIComponent(redirect) : '/chats');
     } catch (error: any) {
       switch (error.code) {
         case 'auth/invalid-email':
@@ -99,10 +100,15 @@ export default function RegisterScreen() {
         }
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => router.replace('/(auth)/login')} style={{ alignItems: 'center', marginTop: 16 }}>
-        <Text style={{ color: '#007AFF' }}>Already have an account? Sign In</Text>
-      </TouchableOpacity>
-    </View>
+      <TouchableOpacity
+          onPress={() => router.replace({
+            pathname: '/(auth)/login',
+            params: redirect ? { redirect } : {},
+          })}
+          style={{ alignItems: 'center', marginTop: 16 }}>
+          <Text style={{ color: '#007AFF' }}>Already have an account? Sign In</Text>
+        </TouchableOpacity>
+      </View>
   );
 }
 
