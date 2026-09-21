@@ -24,6 +24,10 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<any[]>([]);
   const [inputText, setInputText] = useState('');
 
+  // The chat's display name, loaded from the chat document so the
+  // header shows the real chat name instead of a generic "Messages".
+  const [chatName, setChatName] = useState('');
+
   const { dark, colors } = useTheme();
 
   // --- Responsive composer sizing (8px grid, phones-first) ---
@@ -33,11 +37,34 @@ export default function ChatScreen() {
   const { width } = useWindowDimensions();
   const isWide = width >= 768;
 
-  const inputHeight = isWide ? 56 : 48;  // was a fixed 40
+  const inputHeight = isWide ? 56 : 48;
   const inputFont = isWide ? 17 : 16;
-  const barPadding = isWide ? 16 : 8;    // stays on the 8px grid
+  const barPadding = isWide ? 16 : 8;
   const sendPadding = isWide ? 16 : 12;
 
+  // --- Chat name listener ---
+  // Reads the chat document (members are allowed to read it) and feeds
+  // the header title. If the read is ever denied, the title just stays
+  // "Messages" - the error callback stops it becoming an uncaught error.
+  useEffect(() => {
+    if (!id) return;
+
+    const unsubscribe = onSnapshot(
+      doc(db, 'chats', id),
+      (snap) => {
+        if (snap.exists()) {
+          setChatName(snap.data().name ?? 'Messages');
+        }
+      },
+      (error) => {
+        console.log('Chat name listener error:', error.message);
+      }
+    );
+
+    return unsubscribe;
+  }, [id]);
+
+  // --- Messages listener ---
   useEffect(() => {
     if (!id) return;
     const messagesRef = collection(db, 'chats', id, 'messages');
@@ -75,7 +102,8 @@ export default function ChatScreen() {
     try {
       // 1. Add message to the subcollection. senderRole is stored on the
       // message itself so the app never needs to read another user's
-      // profile document (privacy).
+      // profile document (privacy) - and so the label below can render
+      // without extra reads.
       await addDoc(collection(db, 'chats', id, 'messages'), {
         text: textToSend,
         senderId: user.uid,
@@ -101,12 +129,29 @@ export default function ChatScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
+      {/* Sets this screen's header title dynamically from the chat name.
+          This MERGES with the layout's options - the Invite button in the
+          header comes from the layout and stays put; only the title
+          changes here. */}
+      <Stack.Screen options={{ title: chatName || 'Messages' }} />
+
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
         inverted // Keeps the list anchored to the bottom like iMessage
         renderItem={({ item }) => {
           const isMe = item.senderId === user?.uid;
+
+          // Small label showing who posted. senderRole was stored on the
+          // message at send time, so this needs no extra database reads.
+          // Old messages sent before senderRole existed simply render
+          // without a label (undefined falls through to null).
+          // Only shown on other people's messages - your own are obvious.
+          const senderLabel =
+            item.senderRole === 'teacher' ? 'Teacher'
+            : item.senderRole === 'admin' ? 'Admin'
+            : null;
+
           return (
             <View
               style={[
@@ -118,6 +163,11 @@ export default function ChatScreen() {
                 { backgroundColor: isMe ? colors.accent : dark ? '#2c2c2e' : '#e5e5ea' }
               ]}
             >
+              {!isMe && senderLabel && (
+                <Text style={[styles.senderLabel, { color: colors.textMuted }]}>
+                  {senderLabel}
+                </Text>
+              )}
               <Text style={{ color: isMe ? '#fff' : colors.text, fontSize: inputFont }}>
                 {item.text}
               </Text>
@@ -184,6 +234,11 @@ const styles = StyleSheet.create({
   bubble: { padding: 12, borderRadius: 18, marginVertical: 4, marginHorizontal: 12, maxWidth: '75%' },
   myBubble: { alignSelf: 'flex-end', borderBottomRightRadius: 4 },
   theirBubble: { alignSelf: 'flex-start', borderBottomLeftRadius: 4 },
+
+  // Small "Teacher"/"Admin" label above incoming messages. 12pt - the
+  // smallest step in the font hierarchy (body 16, list names 17, titles
+  // 17 semibold).
+  senderLabel: { fontSize: 12, fontWeight: '600', marginBottom: 2 },
 
   // Sizes are computed inline from useWindowDimensions, so no fixed
   // height or padding here - only the structural properties.

@@ -96,13 +96,6 @@ export default function JoinChatScreen() {
           updatedAt: serverTimestamp(),
         });
 
-        // --- Burn the invite so it can't be used a second time ---
-        tx.update(inviteRef, {
-          used: true,
-          usedBy: user!.uid,
-          usedAt: serverTimestamp(),
-        });
-
         return inviteData.chatId;
       });
 
